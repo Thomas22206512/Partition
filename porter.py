@@ -1,29 +1,32 @@
 import pygame
 from pygame.locals import *
 from settings import *
-from note import *
+from mesure import * 
 
 class Porter():
 
-    def __init__(self,clef="sol"):
+    def __init__(self, index=0, clef="sol", temps = 64, valeur="C", hauteur=4, dure=64):
         self.clef = clef
+        self.index = index
+        self.pos_y = index* 350 + 150
         self.display_surface = pygame.display.get_surface()
-        self.liste_note = list()
-        self.random_note(8)
+        self.liste_mesure = list()
+        self.temps = temps
+        self.generate_mesure()
 
+    def generate_mesure(self):
+        for i in range(2):
+            mesure = Mesure(pos_y = self.pos_y, index= i + 2*self.index)
+            self.liste_mesure.append(mesure)
 
-    def random_note(self,k):
-        for i in range(k):
-            note = Note(random.choice(NOTES),i*200 + 100, random.choice([4,5]))
-            self.liste_note.append(note)
+    def move(self):
+        self.pos_y -= 350
+        for mesure in self.liste_mesure:
+            mesure.move()
 
     def display(self):
-        for i in [-80,-40,0,40,80]:
-            pygame.draw.line(self.display_surface, BLANC, (0,WINDOW_HEIGHT//2 + i), (WINDOW_WIDTH, WINDOW_HEIGHT//2 + i), 4)
-        for note in self.liste_note:
-            if note.pos_x < -100 :
-                note1 = Note(random.choice(NOTES), self.liste_note[-1].pos_x + 200, random.choice([4,5]))
-                self.liste_note.append(note1)
-                del self.liste_note[0]
-            note.display()
-            note.move()
+        for i in range(5):
+            pygame.draw.line(self.display_surface, BLANC, (0,self.pos_y + i * 40), (WINDOW_WIDTH, self.pos_y+ i*40), 4)
+        for mesure in self.liste_mesure:
+            mesure.display()
+
